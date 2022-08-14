@@ -54,16 +54,8 @@ fn traverse_dir(path: &Path) -> std::io::Result<DeleteResult> {
                 let file_size = entry_path.metadata()?.len();
 
                 if file_size > 0 {
-                    println!("Current bytes found: {}", file_size);
-
                     result.bytes += file_size;
                 }
-
-                println!(
-                    "Bad file len: {} {:#?}",
-                    entry_path.metadata()?.len(),
-                    entry_path
-                );
 
                 delete_file(entry_path.as_path());
             }
@@ -87,8 +79,6 @@ fn check_if_bad_file(file_extension: Option<&OsStr>) -> bool {
 }
 
 fn delete_file(path: &Path) -> bool {
-    println!("DELETE FILE {:?}", path);
-
     return match std::fs::remove_file(path) {
         Ok(_) => true,
         Err(_) => false,
