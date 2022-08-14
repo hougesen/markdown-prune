@@ -7,12 +7,17 @@ struct DeleteResult {
 }
 
 fn main() -> std::io::Result<()> {
-    let start_path = std::env::args().nth(1);
+    let path_arg = std::env::args().nth(1);
 
-    println!("args {:#?}", start_path);
+    if let Some(path_arg) = path_arg {
+        let start_path = Path::new(&path_arg);
 
-    if let Some(start_path) = start_path {
-        let delete_result = traverse_dir(Path::new(&start_path))?;
+        if !start_path.exists() {
+            println!("ERROR: Path does not exist");
+            return Ok(());
+        }
+
+        let delete_result = traverse_dir(start_path)?;
 
         println!(
             "Deleted {} files totaling {:.2}mb",
