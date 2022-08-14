@@ -1,32 +1,71 @@
 use std::{ffi::OsStr, path::Path};
 
-fn main() {
-    // TODO: accept args instead
-
-    let start_path = Path::new("dummy-files");
-
-    traverse_dir(start_path);
+#[derive(Debug)]
+struct DeleteResult {
+    file_count: u16,
+    bytes: u64,
 }
 
-fn traverse_dir(path: &Path) -> std::io::Result<()> {
-    for entry in std::fs::read_dir(&path)? {
-        println!("{:?} entry {:?}", path, entry);
+fn main() -> std::io::Result<()> {
+    let start_path = std::env::args().nth(1);
 
+    println!("args {:#?}", start_path);
+
+    if let Some(start_path) = start_path {
+        let delete_result = traverse_dir(Path::new(&start_path))?;
+
+        println!(
+            "Deleted {} files totaling {:.2}mb",
+            delete_result.file_count,
+            convert_bytes(delete_result.bytes, ByteSize::MB)
+        )
+    } else {
+        println!("ERROR: Missing path")
+    }
+
+    Ok(())
+}
+
+fn traverse_dir(path: &Path) -> std::io::Result<DeleteResult> {
+    let mut result = DeleteResult {
+        file_count: 0,
+        bytes: 0,
+    };
+
+    for entry in std::fs::read_dir(&path)? {
         let entry_path = entry?.path();
 
         if entry_path.is_dir() {
-            traverse_dir(entry_path.as_path())?;
+            let path_result = traverse_dir(entry_path.as_path())?;
+
+            result.file_count += path_result.file_count;
+            result.bytes += path_result.bytes;
         } else if entry_path.is_file() {
             let file_extension = entry_path.extension();
             let bad_file = check_if_bad_file(file_extension);
 
             if bad_file {
+                result.file_count += 1;
+                let file_size = entry_path.metadata()?.len();
+
+                if file_size > 0 {
+                    println!("Current bytes found: {}", file_size);
+
+                    result.bytes += file_size;
+                }
+
+                println!(
+                    "Bad file len: {} {:#?}",
+                    entry_path.metadata()?.len(),
+                    entry_path
+                );
+
                 delete_file(entry_path.as_path());
             }
         }
     }
 
-    Ok(())
+    Ok(result)
 }
 
 fn check_if_bad_file(file_extension: Option<&OsStr>) -> bool {
@@ -38,7 +77,7 @@ fn check_if_bad_file(file_extension: Option<&OsStr>) -> bool {
 
             return false;
         }
-        None => true,
+        None => false,
     };
 }
 
@@ -49,4 +88,26 @@ fn delete_file(path: &Path) -> bool {
         Ok(_) => true,
         Err(_) => false,
     };
+}
+
+enum ByteSize {
+    B,
+    KB,
+    MB,
+    GB,
+    TB,
+}
+
+fn convert_bytes(bytes: u64, format: ByteSize) -> f64 {
+    if bytes > 0 {
+        return match format {
+            ByteSize::B => (bytes as f64),
+            ByteSize::KB => (bytes as f64) / 1000.0,
+            ByteSize::MB => (bytes as f64) / 1000.0 / 1000.0,
+            ByteSize::GB => (bytes as f64) / 1000.0 / 1000.0 / 1000.0,
+            ByteSize::TB => (bytes as f64) / 1000.0 / 1000.0 / 1000.0 / 1000.0,
+        };
+    }
+
+    0.0
 }
