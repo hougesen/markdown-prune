@@ -108,10 +108,12 @@ fn traverse_dir(path: PathBuf, delete_files: bool) -> std::io::Result<DeleteResu
     Ok(result)
 }
 
+const BAD_EXTENSIONS: [&str; 3] = ["md", "markdown", "mkd"];
+
 fn check_if_bad_file(file_extension: Option<&OsStr>) -> bool {
     match file_extension {
         Some(ext) => {
-            if ext == "md" {
+            if BAD_EXTENSIONS.contains(&ext.to_str().unwrap_or("")) {
                 return true;
             }
 
