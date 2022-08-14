@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub enum ByteSize {
     B,
     KB,
@@ -6,7 +7,19 @@ pub enum ByteSize {
     TB,
 }
 
-pub fn convert_bytes(bytes: u64, format: ByteSize) -> f64 {
+/// Defaults to mb
+pub fn parse_byte_type(arg: &str) -> ByteSize {
+    match arg.trim().to_lowercase().as_str() {
+        "b" => ByteSize::B,
+        "kb" => ByteSize::KB,
+        "mb" => ByteSize::MB,
+        "gb" => ByteSize::GB,
+        "tb" => ByteSize::TB,
+        _ => ByteSize::MB,
+    }
+}
+
+pub fn convert_bytes(bytes: u64, format: &ByteSize) -> f64 {
     if bytes > 0 {
         return match format {
             ByteSize::B => (bytes as f64),
