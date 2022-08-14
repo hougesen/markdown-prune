@@ -1,4 +1,4 @@
-use crate::{check_if_bad_file, delete_file};
+use crate::file::{check_if_bad_file, delete_file};
 
 #[derive(Debug)]
 pub struct DeleteResult {

@@ -1,11 +1,11 @@
 mod config;
 mod convert_bytes;
 mod directory;
+mod file;
 
 use config::Config;
 use convert_bytes::{convert_bytes, ByteSize};
 use directory::traverse_dir;
-use std::{ffi::OsStr, path::PathBuf};
 
 fn main() -> std::io::Result<()> {
     let config = Config::new();
@@ -36,24 +36,4 @@ fn main() -> std::io::Result<()> {
     }
 
     Ok(())
-}
-
-fn check_if_bad_file(file_extension: Option<&OsStr>) -> bool {
-    match file_extension {
-        Some(ext) => {
-            if ext == "md" {
-                return true;
-            }
-
-            false
-        }
-        None => false,
-    }
-}
-
-fn delete_file(path: PathBuf) -> bool {
-    match std::fs::remove_file(path) {
-        Ok(_) => true,
-        Err(_) => false,
-    }
 }
