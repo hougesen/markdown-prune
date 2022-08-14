@@ -1,4 +1,4 @@
-use std::{ffi::OsStr, path::Path};
+use std::{ffi::OsStr, path::PathBuf};
 
 #[derive(Debug)]
 struct DeleteResult {
@@ -6,32 +6,73 @@ struct DeleteResult {
     bytes: u64,
 }
 
+#[derive(Debug)]
+struct Config {
+    path: Option<PathBuf>,
+    delete: bool,
+}
+
 fn main() -> std::io::Result<()> {
-    let path_arg = std::env::args().nth(1);
+    let config = parse_arguments();
 
-    if let Some(path_arg) = path_arg {
-        let start_path = Path::new(&path_arg);
-
+    if let Some(start_path) = config.path {
         if !start_path.exists() {
-            println!("ERROR: Path does not exist");
+            println!("ERROR: Invalid path");
             return Ok(());
         }
 
-        let delete_result = traverse_dir(start_path)?;
+        let result = traverse_dir(start_path, config.delete)?;
 
-        println!(
-            "Deleted {} files totaling {:.2}mb",
-            delete_result.file_count,
-            convert_bytes(delete_result.bytes, ByteSize::MB)
-        )
+        if config.delete {
+            println!(
+                "Deleted {} files totaling {:.2}mb",
+                result.file_count,
+                convert_bytes(result.bytes, ByteSize::MB)
+            )
+        } else {
+            println!(
+                "Found {} files totaling {:.2}mb",
+                result.file_count,
+                convert_bytes(result.bytes, ByteSize::MB)
+            )
+        }
     } else {
-        println!("ERROR: Missing path")
+        println!("ERROR: Invalid path")
     }
 
     Ok(())
 }
 
-fn traverse_dir(path: &Path) -> std::io::Result<DeleteResult> {
+fn parse_arguments() -> Config {
+    let mut config = Config {
+        path: None,
+        delete: true,
+    };
+
+    let args: Vec<String> = std::env::args().collect();
+
+    if args.len() == 2 {
+        config.path = Some(PathBuf::from(args[1].clone()));
+        return config;
+    }
+
+    for i in 0..args.len() {
+        match args[i].as_str() {
+            "--dry" | "--check" => config.delete = false,
+            "--path" => {
+                if i + 1 < args.len() {
+                    let path = PathBuf::from(args[i + 1].clone());
+                    config.path = Some(path);
+                }
+            }
+            _ => continue,
+        }
+    }
+
+    config
+}
+
+fn traverse_dir(path: PathBuf, delete_files: bool) -> std::io::Result<DeleteResult> {
     let mut result = DeleteResult {
         file_count: 0,
         bytes: 0,
@@ -41,7 +82,7 @@ fn traverse_dir(path: &Path) -> std::io::Result<DeleteResult> {
         let entry_path = entry?.path();
 
         if entry_path.is_dir() {
-            let path_result = traverse_dir(entry_path.as_path())?;
+            let path_result = traverse_dir(entry_path, delete_files)?;
 
             result.file_count += path_result.file_count;
             result.bytes += path_result.bytes;
@@ -57,7 +98,9 @@ fn traverse_dir(path: &Path) -> std::io::Result<DeleteResult> {
                     result.bytes += file_size;
                 }
 
-                delete_file(entry_path.as_path());
+                if delete_files {
+                    delete_file(entry_path);
+                }
             }
         }
     }
@@ -66,23 +109,23 @@ fn traverse_dir(path: &Path) -> std::io::Result<DeleteResult> {
 }
 
 fn check_if_bad_file(file_extension: Option<&OsStr>) -> bool {
-    return match file_extension {
+    match file_extension {
         Some(ext) => {
             if ext == "md" {
                 return true;
             }
 
-            return false;
+            false
         }
         None => false,
-    };
+    }
 }
 
-fn delete_file(path: &Path) -> bool {
-    return match std::fs::remove_file(path) {
+fn delete_file(path: PathBuf) -> bool {
+    match std::fs::remove_file(path) {
         Ok(_) => true,
         Err(_) => false,
-    };
+    }
 }
 
 enum ByteSize {
