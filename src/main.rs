@@ -15,9 +15,7 @@ struct Config {
 fn main() -> std::io::Result<()> {
     let config = parse_arguments();
 
-    if let Some(path_arg) = config.path {
-        let start_path = PathBuf::from(path_arg);
-
+    if let Some(start_path) = config.path {
         if !start_path.exists() {
             println!("ERROR: Invalid path");
             return Ok(());
@@ -71,7 +69,7 @@ fn parse_arguments() -> Config {
         }
     }
 
-    return config;
+    config
 }
 
 fn traverse_dir(path: PathBuf, delete_files: bool) -> std::io::Result<DeleteResult> {
@@ -111,23 +109,23 @@ fn traverse_dir(path: PathBuf, delete_files: bool) -> std::io::Result<DeleteResu
 }
 
 fn check_if_bad_file(file_extension: Option<&OsStr>) -> bool {
-    return match file_extension {
+    match file_extension {
         Some(ext) => {
             if ext == "md" {
                 return true;
             }
 
-            return false;
+            false
         }
         None => false,
-    };
+    }
 }
 
 fn delete_file(path: PathBuf) -> bool {
-    return match std::fs::remove_file(path) {
+    match std::fs::remove_file(path) {
         Ok(_) => true,
         Err(_) => false,
-    };
+    }
 }
 
 enum ByteSize {
