@@ -33,7 +33,7 @@ fn print_result(result: DeleteResult, delete_files: bool, unit: &ByteSize) {
         "{} {} files totaling {:.2}{:?}",
         operation,
         result.file_count,
-        convert_bytes(result.bytes, &unit),
+        convert_bytes(result.bytes, unit),
         &unit,
     )
 }
