@@ -12,8 +12,39 @@ struct Config {
     delete: bool,
 }
 
+impl Config {
+    fn new() -> Config {
+        let mut config = Config {
+            path: None,
+            delete: true,
+        };
+
+        let args: Vec<String> = std::env::args().collect();
+
+        if args.len() == 2 {
+            config.path = Some(PathBuf::from(args[1].clone()));
+            return config;
+        }
+
+        for i in 0..args.len() {
+            match args[i].as_str() {
+                "--dry" | "--check" => config.delete = false,
+                "--path" => {
+                    if i + 1 < args.len() {
+                        let path = PathBuf::from(args[i + 1].clone());
+                        config.path = Some(path);
+                    }
+                }
+                _ => continue,
+            }
+        }
+
+        config
+    }
+}
+
 fn main() -> std::io::Result<()> {
-    let config = parse_arguments();
+    let config = Config::new();
 
     if let Some(start_path) = config.path {
         if !start_path.exists() {
@@ -41,35 +72,6 @@ fn main() -> std::io::Result<()> {
     }
 
     Ok(())
-}
-
-fn parse_arguments() -> Config {
-    let mut config = Config {
-        path: None,
-        delete: true,
-    };
-
-    let args: Vec<String> = std::env::args().collect();
-
-    if args.len() == 2 {
-        config.path = Some(PathBuf::from(args[1].clone()));
-        return config;
-    }
-
-    for i in 0..args.len() {
-        match args[i].as_str() {
-            "--dry" | "--check" => config.delete = false,
-            "--path" => {
-                if i + 1 < args.len() {
-                    let path = PathBuf::from(args[i + 1].clone());
-                    config.path = Some(path);
-                }
-            }
-            _ => continue,
-        }
-    }
-
-    config
 }
 
 fn traverse_dir(path: PathBuf, delete_files: bool) -> std::io::Result<DeleteResult> {
@@ -108,12 +110,10 @@ fn traverse_dir(path: PathBuf, delete_files: bool) -> std::io::Result<DeleteResu
     Ok(result)
 }
 
-const BAD_EXTENSIONS: [&str; 3] = ["md", "markdown", "mkd"];
-
 fn check_if_bad_file(file_extension: Option<&OsStr>) -> bool {
     match file_extension {
         Some(ext) => {
-            if BAD_EXTENSIONS.contains(&ext.to_str().unwrap_or("")) {
+            if ext == "md" {
                 return true;
             }
 
