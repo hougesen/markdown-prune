@@ -1,6 +1,6 @@
 [package]
 name = "markdown-prune"
-version = "0.0.2"
+version = "0.0.3"
 edition = "2021"
 description = "Utility for deleting all markdown files in a folder recursively"
 authors = ["Mads Hougesen <mads@mhouge.dk>"]
