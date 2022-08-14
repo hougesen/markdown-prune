@@ -22,3 +22,7 @@ markdown-prune /path/to/folder
 # Relative path
 markdown-prune ./node_modules
 ```
+
+## Disclaimer
+
+Use at your own risk.
