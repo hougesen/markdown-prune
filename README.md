@@ -45,6 +45,29 @@ markdown-prune --path ./node_modules --check
 # Found 2185 files totaling 12.03mb
 ```
 
+#### Result unit size
+
+The argument `--unit` can be used to change the default result byte size.
+
+It accepts the following `b`, `kb`, `mb`, `gb`, `tb`
+
+```sh
+markdown-prune --path ./node_modules --check --unit b
+# Found 2185 files totaling 12030000b
+
+markdown-prune --path ./node_modules --check --unit kb
+# Found 2185 files totaling 12030kb
+
+markdown-prune --path ./node_modules --check --unit mb
+# Found 2185 files totaling 12.03mb
+
+markdown-prune --path ./node_modules --check --unit gb
+# Found 2185 files totaling 0.01gb
+
+markdown-prune --path ./node_modules --check --unit tb
+# Found 2185 files totaling 0tb
+```
+
 ## Disclaimer
 
 Use at your own risk.
