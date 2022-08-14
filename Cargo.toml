@@ -2,5 +2,12 @@
 name = "markdown-prune"
 version = "0.0.1"
 edition = "2021"
+description = "Utility for deleting all markdown files in a folder recursively"
+authors = ["Mads Hougesen <mads@mhouge.dk>"]
+homepage = "https://github.com/hougesen/markdown-prune"
+repository = "https://github.com/hougesen/markdown-prune"
+license = "MIT"
+readme = "README.md"
+categories = ["command-line-utilities"]
 
 [dependencies]
