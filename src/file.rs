@@ -14,8 +14,5 @@ pub fn check_if_bad_file(file_extension: Option<&std::ffi::OsStr>) -> bool {
 }
 
 pub fn delete_file(path: std::path::PathBuf) -> bool {
-    match std::fs::remove_file(path) {
-        Ok(_) => true,
-        Err(_) => false,
-    }
+    std::fs::remove_file(path).is_ok()
 }
