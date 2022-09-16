@@ -45,6 +45,17 @@ markdown-prune --path ./node_modules --check
 # Found 2185 files totaling 12.03mb
 ```
 
+#### Custom filenames & extensions
+
+If you wish to remove files you can use the following commands `--file`, `--file-name` or `--ext`.
+
+```sh
+
+markdown-prune --path ./node_modules --file .DS_Store --file .d.ts
+
+# Found 25216 files totaling 114.10MB
+```
+
 #### Result unit size
 
 The argument `--unit` can be used to change the default result byte size.

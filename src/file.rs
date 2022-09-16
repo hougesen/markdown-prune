@@ -1,6 +1,6 @@
 const BAD_EXTENSIONS: [&str; 3] = ["md", "markdown", "mkd"];
 
-pub fn check_if_bad_file(file_extension: Option<&std::ffi::OsStr>) -> bool {
+pub fn check_if_bad_file_ext(file_extension: Option<&std::ffi::OsStr>) -> bool {
     match file_extension {
         Some(ext) => {
             if BAD_EXTENSIONS.contains(&ext.to_str().unwrap_or("")) {
@@ -11,6 +11,20 @@ pub fn check_if_bad_file(file_extension: Option<&std::ffi::OsStr>) -> bool {
         }
         None => false,
     }
+}
+
+pub fn check_if_bad_file(file_path: &std::path::PathBuf, bad_files: &Vec<String>) -> bool {
+    if !bad_files.is_empty() {
+        if let Some(file_name) = file_path.file_name() {
+            for bad_file_name in bad_files {
+                if file_name.to_string_lossy().ends_with(bad_file_name) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
 }
 
 pub fn delete_file(path: std::path::PathBuf) -> bool {

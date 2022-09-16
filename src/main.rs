@@ -12,15 +12,15 @@ fn main() -> std::io::Result<()> {
 
     if let Some(start_path) = config.path {
         if !start_path.exists() {
-            println!("ERROR: Invalid path");
-            return Ok(());
+            eprintln!("ERROR: Path {:#?} does not exist", start_path);
+            std::process::exit(2);
         }
 
-        let result = traverse_dir(start_path, config.delete_files)?;
+        let result = traverse_dir(start_path, config.delete_files, &config.custom_bad_files)?;
 
         print_result(result, config.delete_files, &config.unit);
     } else {
-        println!("ERROR: Missing path")
+        eprintln!("ERROR: Missing path")
     }
 
     Ok(())
