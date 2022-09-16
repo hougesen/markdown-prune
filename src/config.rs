@@ -4,6 +4,7 @@ pub struct Config {
     pub path: Option<std::path::PathBuf>,
     pub delete_files: bool,
     pub unit: ByteSize,
+    pub custom_bad_files: Vec<String>,
 }
 
 impl Config {
@@ -12,6 +13,7 @@ impl Config {
             path: None,
             delete_files: true,
             unit: ByteSize::MB,
+            custom_bad_files: vec![],
         };
 
         let args: Vec<String> = std::env::args().collect();
@@ -25,18 +27,28 @@ impl Config {
             match args[i].as_str() {
                 "--dry" | "--check" => config.delete_files = false,
                 "--path" => {
-                    if i + 1 < args.len() {
+                    if i + 1 < args.len() && !(&args[i + 1].starts_with("--")) {
                         let path = std::path::PathBuf::from(args[i + 1].clone());
                         config.path = Some(path);
                     } else {
-                        println!("ERROR: --path is missing an input");
+                        eprintln!("ERROR: --path is missing an input or is invalid");
+                        std::process::exit(22);
                     }
                 }
                 "--unit" => {
-                    if i + 1 < args.len() {
+                    if i + 1 < args.len() && !(&args[i + 1].starts_with("--")) {
                         config.unit = parse_byte_type(&args[i + 1]);
                     } else {
-                        println!("WARNING: --unit is missing an input");
+                        eprintln!("WARNING: --unit is missing an input or is invalid");
+                        std::process::exit(22);
+                    }
+                }
+                "--file" | "--file-name" | "--ext" => {
+                    if i + 1 < args.len() && !(&args[i + 1].starts_with("--")) {
+                        config.custom_bad_files.push(args[i + 1].to_string())
+                    } else {
+                        eprintln!("WARNING: --file is missing an input or is invalid");
+                        std::process::exit(22);
                     }
                 }
                 _ => continue,
