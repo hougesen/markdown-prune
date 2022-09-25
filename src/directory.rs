@@ -28,9 +28,7 @@ pub fn traverse_dir(
                 result.bytes += path_result.bytes;
             }
         } else if entry_path.is_file() {
-            let file_extension = entry_path.extension();
-
-            if check_if_bad_file_ext(file_extension)
+            if check_if_bad_file_ext(entry_path.extension())
                 || (!custom_bad_files.is_empty()
                     && check_if_bad_file(&entry_path, custom_bad_files))
             {
