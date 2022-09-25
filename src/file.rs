@@ -41,3 +41,22 @@ pub fn check_if_bad_file(file_path: &std::path::Path, bad_files: &Vec<String>) -
 pub fn delete_file(path: std::path::PathBuf) -> bool {
     std::fs::remove_file(path).is_ok()
 }
+
+#[cfg(test)]
+mod test_check_if_bad_file_ext {
+    use crate::file::{check_if_bad_file_ext, BAD_EXTENSIONS};
+
+    #[test]
+    fn true_if_in_bad_extensions() {
+        BAD_EXTENSIONS
+            .iter()
+            .for_each(|ext| assert!(check_if_bad_file_ext(Some(std::ffi::OsStr::new(ext)))))
+    }
+
+    #[test]
+    fn false_if_not_in_bad_extensions() {
+        assert!(check_if_bad_file_ext(Some(std::ffi::OsStr::new("not-a-bad-ext"))) == false);
+
+        assert!(check_if_bad_file_ext(Some(std::ffi::OsStr::new("not-a bad-ext-either"))) == false);
+    }
+}
