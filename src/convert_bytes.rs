@@ -32,3 +32,73 @@ pub fn convert_bytes(bytes: u64, format: &ByteSize) -> f64 {
 
     0.0
 }
+
+#[cfg(test)]
+mod test_parse_byte_type {
+    use crate::convert_bytes::{parse_byte_type, ByteSize};
+
+    #[test]
+    fn none_parse_byte_type() {
+        assert!(matches!(parse_byte_type(""), ByteSize::MB));
+    }
+
+    #[test]
+    fn b_parse_byte_type() {
+        assert!(matches!(parse_byte_type("b"), ByteSize::B));
+        assert!(matches!(parse_byte_type("  b   "), ByteSize::B));
+        assert!(matches!(parse_byte_type("b   "), ByteSize::B));
+        assert!(matches!(parse_byte_type("  b"), ByteSize::B));
+        assert!(matches!(parse_byte_type("B"), ByteSize::B));
+        assert!(matches!(parse_byte_type("  B   "), ByteSize::B));
+        assert!(matches!(parse_byte_type("B   "), ByteSize::B));
+        assert!(matches!(parse_byte_type("  B"), ByteSize::B));
+    }
+
+    #[test]
+    fn kb_parse_byte_type() {
+        assert!(matches!(parse_byte_type("kb"), ByteSize::KB));
+        assert!(matches!(parse_byte_type("  kb   "), ByteSize::KB));
+        assert!(matches!(parse_byte_type("kb   "), ByteSize::KB));
+        assert!(matches!(parse_byte_type("  kb"), ByteSize::KB));
+        assert!(matches!(parse_byte_type("KB"), ByteSize::KB));
+        assert!(matches!(parse_byte_type("  KB   "), ByteSize::KB));
+        assert!(matches!(parse_byte_type("KB   "), ByteSize::KB));
+        assert!(matches!(parse_byte_type("  kB"), ByteSize::KB));
+    }
+
+    #[test]
+    fn mb_parse_byte_type() {
+        assert!(matches!(parse_byte_type("mb"), ByteSize::MB));
+        assert!(matches!(parse_byte_type("  mb   "), ByteSize::MB));
+        assert!(matches!(parse_byte_type("mb   "), ByteSize::MB));
+        assert!(matches!(parse_byte_type("  mb"), ByteSize::MB));
+        assert!(matches!(parse_byte_type("MB"), ByteSize::MB));
+        assert!(matches!(parse_byte_type("  MB   "), ByteSize::MB));
+        assert!(matches!(parse_byte_type("MB   "), ByteSize::MB));
+        assert!(matches!(parse_byte_type("  MB"), ByteSize::MB));
+    }
+
+    #[test]
+    fn gb_parse_byte_type() {
+        assert!(matches!(parse_byte_type("gb"), ByteSize::GB));
+        assert!(matches!(parse_byte_type("  gb   "), ByteSize::GB));
+        assert!(matches!(parse_byte_type("gb   "), ByteSize::GB));
+        assert!(matches!(parse_byte_type("  gb"), ByteSize::GB));
+        assert!(matches!(parse_byte_type("gB"), ByteSize::GB));
+        assert!(matches!(parse_byte_type("  GB   "), ByteSize::GB));
+        assert!(matches!(parse_byte_type("gB   "), ByteSize::GB));
+        assert!(matches!(parse_byte_type("  GB"), ByteSize::GB));
+    }
+
+    #[test]
+    fn tb_parse_byte_type() {
+        assert!(matches!(parse_byte_type("tb"), ByteSize::TB));
+        assert!(matches!(parse_byte_type("  tb   "), ByteSize::TB));
+        assert!(matches!(parse_byte_type("tb   "), ByteSize::TB));
+        assert!(matches!(parse_byte_type("  tb"), ByteSize::TB));
+        assert!(matches!(parse_byte_type("tB"), ByteSize::TB));
+        assert!(matches!(parse_byte_type("  tB   "), ByteSize::TB));
+        assert!(matches!(parse_byte_type("tB   "), ByteSize::TB));
+        assert!(matches!(parse_byte_type("  TB"), ByteSize::TB));
+    }
+}
