@@ -43,20 +43,47 @@ pub fn delete_file(path: std::path::PathBuf) -> bool {
 }
 
 #[cfg(test)]
-mod test_check_if_bad_file_ext {
-    use crate::file::{check_if_bad_file_ext, BAD_EXTENSIONS};
+mod test_file {
+    mod test_check_if_bad_file_ext {
+        use crate::file::{check_if_bad_file_ext, BAD_EXTENSIONS};
 
-    #[test]
-    fn true_if_in_bad_extensions() {
-        BAD_EXTENSIONS
-            .iter()
-            .for_each(|ext| assert!(check_if_bad_file_ext(Some(std::ffi::OsStr::new(ext)))))
+        #[test]
+        fn true_if_in_bad_extensions() {
+            BAD_EXTENSIONS
+                .iter()
+                .for_each(|ext| assert!(check_if_bad_file_ext(Some(std::ffi::OsStr::new(ext)))))
+        }
+
+        #[test]
+        fn false_if_not_in_bad_extensions() {
+            assert!(check_if_bad_file_ext(Some(std::ffi::OsStr::new("not-a-bad-ext"))) == false);
+
+            assert!(
+                check_if_bad_file_ext(Some(std::ffi::OsStr::new("not-a bad-ext-either"))) == false
+            );
+        }
     }
 
-    #[test]
-    fn false_if_not_in_bad_extensions() {
-        assert!(check_if_bad_file_ext(Some(std::ffi::OsStr::new("not-a-bad-ext"))) == false);
+    mod test_check_if_bad_file {
+        use crate::file::check_if_bad_file;
 
-        assert!(check_if_bad_file_ext(Some(std::ffi::OsStr::new("not-a bad-ext-either"))) == false);
+        #[test]
+        fn test_check_if_bad_file() {
+            let bad_files = vec![
+                ".DS_Store".to_string(),
+                ".md".to_string(),
+                ".d.ts".to_string(),
+            ];
+
+            assert!(check_if_bad_file(std::path::Path::new("./README.md"), &bad_files) == true);
+            assert!(check_if_bad_file(std::path::Path::new("./DS_Store.md"), &bad_files) == true);
+            assert!(check_if_bad_file(std::path::Path::new("./README.d.ts"), &bad_files) == true);
+            assert!(check_if_bad_file(std::path::Path::new("./dummy.md"), &bad_files) == true);
+
+            assert!(check_if_bad_file(std::path::Path::new("./dummy.ts"), &bad_files) == false);
+            assert!(check_if_bad_file(std::path::Path::new("./dummy.cpp"), &bad_files) == false);
+            assert!(check_if_bad_file(std::path::Path::new("./dummy.rs"), &bad_files) == false);
+            assert!(check_if_bad_file(std::path::Path::new("./dummy.nim"), &bad_files) == false);
+        }
     }
 }
