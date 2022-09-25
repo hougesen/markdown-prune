@@ -19,10 +19,10 @@ pub fn traverse_dir(
         let entry_path = entry?.path();
 
         if entry_path.is_dir() {
-            let path_result = traverse_dir(entry_path, delete_files, custom_bad_files)?;
-
-            result.file_count += path_result.file_count;
-            result.bytes += path_result.bytes;
+            if let Ok(path_result) = traverse_dir(entry_path, delete_files, custom_bad_files) {
+                result.file_count += path_result.file_count;
+                result.bytes += path_result.bytes;
+            }
         } else if entry_path.is_file() {
             let file_extension = entry_path.extension();
 
