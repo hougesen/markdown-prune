@@ -2,7 +2,7 @@ use crate::file::{check_if_bad_file, check_if_bad_file_ext, delete_file};
 
 #[derive(Debug)]
 pub struct DeleteResult {
-    pub file_count: u16,
+    pub file_count: u64,
     pub bytes: u64,
 }
 
