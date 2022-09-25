@@ -1,13 +1,14 @@
-const BAD_EXTENSIONS: [&str; 3] = ["md", "markdown", "mkd"];
+const BAD_EXTENSIONS: [&str; 3] = ["markdown", "md", "mkd"];
 
 pub fn check_if_bad_file_ext(file_extension: Option<&std::ffi::OsStr>) -> bool {
     match file_extension {
         Some(ext) => {
-            if BAD_EXTENSIONS.contains(&ext.to_str().unwrap_or("")) {
-                return true;
+            // No need to check BAD_EXTENSIONS if the ext length is less than the length of "md"
+            if ext.len() < 2 {
+                return false;
             }
 
-            false
+            BAD_EXTENSIONS.binary_search(&ext.to_str().unwrap()).is_ok()
         }
         None => false,
     }
