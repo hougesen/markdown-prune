@@ -16,7 +16,11 @@ pub fn traverse_dir(
     };
 
     for entry in std::fs::read_dir(&path)? {
-        let entry_path = entry?.path();
+        let entry_path = if entry.is_ok() {
+            entry?.path()
+        } else {
+            continue;
+        };
 
         if entry_path.is_dir() {
             if let Ok(path_result) = traverse_dir(entry_path, delete_files, custom_bad_files) {
