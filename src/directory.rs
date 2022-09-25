@@ -1,6 +1,5 @@
 use crate::file::{check_if_bad_file, check_if_bad_file_ext, delete_file};
 
-#[derive(Debug)]
 pub struct DeleteResult {
     pub file_count: u64,
     pub bytes: u64,
@@ -33,10 +32,8 @@ pub fn traverse_dir(
             {
                 result.file_count += 1;
 
-                let file_size = entry_path.metadata()?.len();
-
-                if file_size > 0 {
-                    result.bytes += file_size;
+                if let Ok(metadata) = entry_path.metadata() {
+                    result.bytes += metadata.len()
                 }
 
                 if delete_files {
