@@ -13,7 +13,7 @@ pub fn check_if_bad_file_ext(file_extension: Option<&std::ffi::OsStr>) -> bool {
     }
 }
 
-pub fn check_if_bad_file(file_path: &std::path::PathBuf, bad_files: &Vec<String>) -> bool {
+pub fn check_if_bad_file(file_path: &std::path::Path, bad_files: &Vec<String>) -> bool {
     if !bad_files.is_empty() {
         if let Some(file_name) = file_path.file_name() {
             for bad_file_name in bad_files {
@@ -24,7 +24,7 @@ pub fn check_if_bad_file(file_path: &std::path::PathBuf, bad_files: &Vec<String>
         }
     }
 
-    return false;
+    false
 }
 
 pub fn delete_file(path: std::path::PathBuf) -> bool {
