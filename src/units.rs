@@ -35,7 +35,6 @@ pub fn convert_bytes(bytes: u64, format: &ByteSize) -> f64 {
 
 #[cfg(test)]
 mod units {
-
     mod test_parse_byte_type {
         use crate::units::{parse_byte_type, ByteSize};
 
