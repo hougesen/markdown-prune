@@ -16,8 +16,14 @@ pub fn check_if_bad_file_ext(file_extension: Option<&std::ffi::OsStr>) -> bool {
 pub fn check_if_bad_file(file_path: &std::path::Path, bad_files: &Vec<String>) -> bool {
     if !bad_files.is_empty() {
         if let Some(file_name) = file_path.file_name() {
+            let file_name_string = file_name.to_string_lossy();
+
             for bad_file_name in bad_files {
-                if file_name.to_string_lossy().ends_with(bad_file_name) {
+                if file_name.len() < bad_file_name.len() {
+                    continue;
+                }
+
+                if file_name_string.ends_with(bad_file_name) {
                     return true;
                 }
             }
