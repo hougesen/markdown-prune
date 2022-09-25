@@ -1,4 +1,4 @@
-use crate::convert_bytes::{parse_byte_type, ByteSize};
+use crate::units::{parse_byte_type, ByteSize};
 
 pub struct Config {
     pub path: Option<std::path::PathBuf>,

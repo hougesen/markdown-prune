@@ -1,11 +1,11 @@
 mod config;
-mod convert_bytes;
 mod directory;
 mod file;
+mod units;
 
 use config::Config;
-use convert_bytes::{convert_bytes, ByteSize};
 use directory::{traverse_dir, DeleteResult};
+use units::{convert_bytes, ByteSize};
 
 fn main() -> std::io::Result<()> {
     let config = Config::new();
