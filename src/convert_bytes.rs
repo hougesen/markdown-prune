@@ -102,3 +102,63 @@ mod test_parse_byte_type {
         assert!(matches!(parse_byte_type("  TB"), ByteSize::TB));
     }
 }
+
+#[cfg(test)]
+mod test_convert_bytes {
+    use crate::convert_bytes::{convert_bytes, ByteSize};
+
+    #[test]
+    fn all_convert_bytes() {
+        let tb = convert_bytes(1000000000000, &ByteSize::TB);
+        assert!(tb == 1.0);
+
+        let gb = convert_bytes(1000000000000, &ByteSize::GB);
+        assert!(gb == 1000.0);
+
+        let mb = convert_bytes(1000000000000, &ByteSize::MB);
+        assert!(mb == 1000000.0);
+
+        let kb = convert_bytes(1000000000000, &ByteSize::KB);
+        assert!(kb == 1000000000.0);
+
+        let b = convert_bytes(1000000000000, &ByteSize::B);
+        assert!(b == 1000000000000.0);
+    }
+
+    #[test]
+    fn b_convert_bytes() {
+        assert!(convert_bytes(1, &ByteSize::B) == 1.0);
+        assert!(convert_bytes(10, &ByteSize::B) == 10.0);
+        assert!(convert_bytes(100, &ByteSize::B) == 100.0);
+        assert!(convert_bytes(1000, &ByteSize::B) == 1000.0);
+    }
+
+    #[test]
+    fn kb_convert_bytes() {
+        assert!(convert_bytes(1000, &ByteSize::KB) == 1.0);
+        assert!(convert_bytes(10000, &ByteSize::KB) == 10.0);
+        assert!(convert_bytes(100000, &ByteSize::KB) == 100.0);
+        assert!(convert_bytes(1000000, &ByteSize::KB) == 1000.0);
+    }
+
+    #[test]
+    fn mb_convert_bytes() {
+        assert!(convert_bytes(1000000, &ByteSize::MB) == 1.0);
+        assert!(convert_bytes(10000000, &ByteSize::MB) == 10.0);
+        assert!(convert_bytes(100000000, &ByteSize::MB) == 100.0);
+        assert!(convert_bytes(1000000000, &ByteSize::MB) == 1000.0);
+    }
+
+    #[test]
+    fn gb_convert_bytes() {
+        assert!(convert_bytes(1000000000, &ByteSize::GB) == 1.0);
+        assert!(convert_bytes(10000000000, &ByteSize::GB) == 10.0);
+        assert!(convert_bytes(100000000000, &ByteSize::GB) == 100.0);
+        assert!(convert_bytes(1000000000000, &ByteSize::GB) == 1000.0);
+    }
+
+    #[test]
+    fn tb_convert_bytes() {
+        assert!(convert_bytes(1000000000000, &ByteSize::TB) == 1.0);
+    }
+}
