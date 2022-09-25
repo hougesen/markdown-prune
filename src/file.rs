@@ -8,7 +8,11 @@ pub fn check_if_bad_file_ext(file_extension: Option<&std::ffi::OsStr>) -> bool {
                 return false;
             }
 
-            BAD_EXTENSIONS.binary_search(&ext.to_str().unwrap()).is_ok()
+            if let Some(ext_str) = ext.to_str() {
+                return BAD_EXTENSIONS.binary_search(&ext_str).is_ok();
+            }
+
+            false
         }
         None => false,
     }
