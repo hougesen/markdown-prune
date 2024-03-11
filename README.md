@@ -5,7 +5,7 @@ Utility for deleting all markdown files in a folder recursively. Intended to be 
 ## Installation
 
 ```sh
-curl -fsSL "https://bina.egoist.dev/hougesen/markdown-prune" | sh
+cargo install markdown-prune
 ```
 
 ## Usage
