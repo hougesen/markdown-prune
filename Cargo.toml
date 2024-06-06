@@ -9,5 +9,6 @@ repository = "https://github.com/hougesen/markdown-prune"
 license = "MIT"
 readme = "README.md"
 categories = ["command-line-utilities"]
+rust-version = "1.56"
 
 [dependencies]
