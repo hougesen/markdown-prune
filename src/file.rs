@@ -56,11 +56,13 @@ mod test_file {
 
         #[test]
         fn false_if_not_in_bad_extensions() {
-            assert!(check_if_bad_file_ext(Some(std::ffi::OsStr::new("not-a-bad-ext"))) == false);
+            assert!(!check_if_bad_file_ext(Some(std::ffi::OsStr::new(
+                "not-a-bad-ext"
+            ))));
 
-            assert!(
-                check_if_bad_file_ext(Some(std::ffi::OsStr::new("not-a bad-ext-either"))) == false
-            );
+            assert!(!check_if_bad_file_ext(Some(std::ffi::OsStr::new(
+                "not-a bad-ext-either"
+            ))));
         }
     }
 
@@ -75,15 +77,39 @@ mod test_file {
                 ".d.ts".to_string(),
             ];
 
-            assert!(check_if_bad_file(std::path::Path::new("./README.md"), &bad_files) == true);
-            assert!(check_if_bad_file(std::path::Path::new("./DS_Store.md"), &bad_files) == true);
-            assert!(check_if_bad_file(std::path::Path::new("./README.d.ts"), &bad_files) == true);
-            assert!(check_if_bad_file(std::path::Path::new("./dummy.md"), &bad_files) == true);
+            assert!(check_if_bad_file(
+                std::path::Path::new("./README.md"),
+                &bad_files
+            ));
+            assert!(check_if_bad_file(
+                std::path::Path::new("./DS_Store.md"),
+                &bad_files
+            ));
+            assert!(check_if_bad_file(
+                std::path::Path::new("./README.d.ts"),
+                &bad_files
+            ));
+            assert!(check_if_bad_file(
+                std::path::Path::new("./dummy.md"),
+                &bad_files
+            ));
 
-            assert!(check_if_bad_file(std::path::Path::new("./dummy.ts"), &bad_files) == false);
-            assert!(check_if_bad_file(std::path::Path::new("./dummy.cpp"), &bad_files) == false);
-            assert!(check_if_bad_file(std::path::Path::new("./dummy.rs"), &bad_files) == false);
-            assert!(check_if_bad_file(std::path::Path::new("./dummy.nim"), &bad_files) == false);
+            assert!(!check_if_bad_file(
+                std::path::Path::new("./dummy.ts"),
+                &bad_files
+            ));
+            assert!(!check_if_bad_file(
+                std::path::Path::new("./dummy.cpp"),
+                &bad_files
+            ));
+            assert!(!check_if_bad_file(
+                std::path::Path::new("./dummy.rs"),
+                &bad_files
+            ));
+            assert!(!check_if_bad_file(
+                std::path::Path::new("./dummy.nim"),
+                &bad_files
+            ));
         }
     }
 }

@@ -22,7 +22,7 @@ pub fn parse_byte_type(arg: &str) -> ByteSize {
 pub fn convert_bytes(bytes: u64, format: &ByteSize) -> f64 {
     if bytes > 0 {
         return match format {
-            ByteSize::B => (bytes as f64),
+            ByteSize::B => bytes as f64,
             ByteSize::KB => (bytes as f64) / 1000.0,
             ByteSize::MB => (bytes as f64) / 1000.0 / 1000.0,
             ByteSize::GB => (bytes as f64) / 1000.0 / 1000.0 / 1000.0,
@@ -34,7 +34,7 @@ pub fn convert_bytes(bytes: u64, format: &ByteSize) -> f64 {
 }
 
 #[cfg(test)]
-mod units {
+mod test_units {
     mod test_parse_byte_type {
         use crate::units::{parse_byte_type, ByteSize};
 
