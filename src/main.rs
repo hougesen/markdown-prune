@@ -16,17 +16,17 @@ fn main() -> std::io::Result<()> {
             std::process::exit(2);
         }
 
-        let result = traverse_dir(start_path, config.delete_files, &config.custom_bad_files)?;
+        let result = traverse_dir(&start_path, config.delete_files, &config.custom_bad_files)?;
 
-        print_result(result, config.delete_files, &config.unit);
+        print_result(&result, config.delete_files, config.unit);
     } else {
-        eprintln!("ERROR: Missing path")
+        eprintln!("ERROR: Missing path");
     }
 
     Ok(())
 }
 
-fn print_result(result: DeleteResult, delete_files: bool, unit: &ByteSize) {
+fn print_result(result: &DeleteResult, delete_files: bool, unit: ByteSize) {
     let operation = if delete_files { "Deleted" } else { "Found" };
 
     println!(
@@ -35,5 +35,5 @@ fn print_result(result: DeleteResult, delete_files: bool, unit: &ByteSize) {
         result.file_count,
         convert_bytes(result.bytes, unit),
         &unit,
-    )
+    );
 }

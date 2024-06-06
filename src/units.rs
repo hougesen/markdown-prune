@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum ByteSize {
     B,
     KB,
@@ -12,21 +12,20 @@ pub fn parse_byte_type(arg: &str) -> ByteSize {
     match arg.trim().to_lowercase().as_str() {
         "b" => ByteSize::B,
         "kb" => ByteSize::KB,
-        "mb" => ByteSize::MB,
         "gb" => ByteSize::GB,
         "tb" => ByteSize::TB,
         _ => ByteSize::MB,
     }
 }
 
-pub fn convert_bytes(bytes: u64, format: &ByteSize) -> f64 {
+pub fn convert_bytes(bytes: u64, format: ByteSize) -> f64 {
     if bytes > 0 {
         return match format {
             ByteSize::B => bytes as f64,
-            ByteSize::KB => (bytes as f64) / 1000.0,
-            ByteSize::MB => (bytes as f64) / 1000.0 / 1000.0,
-            ByteSize::GB => (bytes as f64) / 1000.0 / 1000.0 / 1000.0,
-            ByteSize::TB => (bytes as f64) / 1000.0 / 1000.0 / 1000.0 / 1000.0,
+            ByteSize::KB => bytes as f64 / 1000.0,
+            ByteSize::MB => bytes as f64 / 1000.0 / 1000.0,
+            ByteSize::GB => bytes as f64 / 1000.0 / 1000.0 / 1000.0,
+            ByteSize::TB => bytes as f64 / 1000.0 / 1000.0 / 1000.0 / 1000.0,
         };
     }
 
@@ -105,61 +104,62 @@ mod test_units {
     }
 
     mod test_convert_bytes {
+
         use crate::units::{convert_bytes, ByteSize};
 
         #[test]
         fn all_convert_bytes() {
-            let tb = convert_bytes(1000000000000, &ByteSize::TB);
-            assert!(tb == 1.0);
+            let tb = convert_bytes(1_000_000_000_000, ByteSize::TB);
+            assert!((tb - 1.0).abs() < f64::EPSILON);
 
-            let gb = convert_bytes(1000000000000, &ByteSize::GB);
-            assert!(gb == 1000.0);
+            let gb = convert_bytes(1_000_000_000_000, ByteSize::GB);
+            assert!((gb - 1_000.0).abs() < f64::EPSILON);
 
-            let mb = convert_bytes(1000000000000, &ByteSize::MB);
-            assert!(mb == 1000000.0);
+            let mb = convert_bytes(1_000_000_000_000, ByteSize::MB);
+            assert!((mb - 1_000_000.0).abs() < f64::EPSILON);
 
-            let kb = convert_bytes(1000000000000, &ByteSize::KB);
-            assert!(kb == 1000000000.0);
+            let kb = convert_bytes(1_000_000_000_000, ByteSize::KB);
+            assert!((kb - 1_000_000_000.0).abs() < f64::EPSILON);
 
-            let b = convert_bytes(1000000000000, &ByteSize::B);
-            assert!(b == 1000000000000.0);
+            let b = convert_bytes(1_000_000_000_000, ByteSize::B);
+            assert!((b - 1_000_000_000_000.0).abs() < f64::EPSILON);
         }
 
         #[test]
         fn b_convert_bytes() {
-            assert!(convert_bytes(1, &ByteSize::B) == 1.0);
-            assert!(convert_bytes(10, &ByteSize::B) == 10.0);
-            assert!(convert_bytes(100, &ByteSize::B) == 100.0);
-            assert!(convert_bytes(1000, &ByteSize::B) == 1000.0);
+            assert!((convert_bytes(1, ByteSize::B) - 1.0).abs() < f64::EPSILON);
+            assert!((convert_bytes(10, ByteSize::B) - 10.0).abs() < f64::EPSILON);
+            assert!((convert_bytes(100, ByteSize::B) - 100.0).abs() < f64::EPSILON);
+            assert!((convert_bytes(1_000, ByteSize::B) - 1000.0).abs() < f64::EPSILON);
         }
 
         #[test]
         fn kb_convert_bytes() {
-            assert!(convert_bytes(1000, &ByteSize::KB) == 1.0);
-            assert!(convert_bytes(10000, &ByteSize::KB) == 10.0);
-            assert!(convert_bytes(100000, &ByteSize::KB) == 100.0);
-            assert!(convert_bytes(1000000, &ByteSize::KB) == 1000.0);
+            assert!((convert_bytes(1_000, ByteSize::KB) - 1.0).abs() < f64::EPSILON);
+            assert!((convert_bytes(10_000, ByteSize::KB) - 10.0).abs() < f64::EPSILON);
+            assert!((convert_bytes(100_000, ByteSize::KB) - 100.0).abs() < f64::EPSILON);
+            assert!((convert_bytes(1_000_000, ByteSize::KB) - 1000.0).abs() < f64::EPSILON);
         }
 
         #[test]
         fn mb_convert_bytes() {
-            assert!(convert_bytes(1000000, &ByteSize::MB) == 1.0);
-            assert!(convert_bytes(10000000, &ByteSize::MB) == 10.0);
-            assert!(convert_bytes(100000000, &ByteSize::MB) == 100.0);
-            assert!(convert_bytes(1000000000, &ByteSize::MB) == 1000.0);
+            assert!((convert_bytes(1_000_000, ByteSize::MB) - 1.0).abs() < f64::EPSILON);
+            assert!((convert_bytes(10_000_000, ByteSize::MB) - 10.0).abs() < f64::EPSILON);
+            assert!((convert_bytes(100_000_000, ByteSize::MB) - 100.0).abs() < f64::EPSILON);
+            assert!((convert_bytes(1_000_000_000, ByteSize::MB) - 1000.0).abs() < f64::EPSILON);
         }
 
         #[test]
         fn gb_convert_bytes() {
-            assert!(convert_bytes(1000000000, &ByteSize::GB) == 1.0);
-            assert!(convert_bytes(10000000000, &ByteSize::GB) == 10.0);
-            assert!(convert_bytes(100000000000, &ByteSize::GB) == 100.0);
-            assert!(convert_bytes(1000000000000, &ByteSize::GB) == 1000.0);
+            assert!((convert_bytes(1_000_000_000, ByteSize::GB) - 1.0).abs() < f64::EPSILON);
+            assert!((convert_bytes(10_000_000_000, ByteSize::GB) - 10.0).abs() < f64::EPSILON);
+            assert!((convert_bytes(100_000_000_000, ByteSize::GB) - 100.0).abs() < f64::EPSILON);
+            assert!((convert_bytes(1_000_000_000_000, ByteSize::GB) - 1000.0).abs() < f64::EPSILON);
         }
 
         #[test]
         fn tb_convert_bytes() {
-            assert!(convert_bytes(1000000000000, &ByteSize::TB) == 1.0);
+            assert!((convert_bytes(1_000_000_000_000, ByteSize::TB) - 1.0).abs() < f64::EPSILON);
         }
     }
 }
