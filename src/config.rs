@@ -8,12 +8,12 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new() -> Config {
-        let mut config = Config {
+    pub fn new() -> Self {
+        let mut config = Self {
             path: None,
             delete_files: true,
             unit: ByteSize::MB,
-            custom_bad_files: vec![],
+            custom_bad_files: Vec::new(),
         };
 
         let args: Vec<String> = std::env::args().collect();
@@ -45,7 +45,7 @@ impl Config {
                 }
                 "--file" | "--file-name" | "--ext" => {
                     if i + 1 < args.len() && !(&args[i + 1].starts_with("--")) {
-                        config.custom_bad_files.push(args[i + 1].to_string())
+                        config.custom_bad_files.push(args[i + 1].to_string());
                     } else {
                         eprintln!("WARNING: --file is missing an input or is invalid");
                         std::process::exit(22);

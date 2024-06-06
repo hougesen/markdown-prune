@@ -6,7 +6,7 @@ pub struct DeleteResult {
 }
 
 pub fn traverse_dir(
-    path: std::path::PathBuf,
+    path: &std::path::Path,
     delete_files: bool,
     custom_bad_files: &Vec<String>,
 ) -> std::io::Result<DeleteResult> {
@@ -15,7 +15,7 @@ pub fn traverse_dir(
         bytes: 0,
     };
 
-    for entry in std::fs::read_dir(&path)? {
+    for entry in std::fs::read_dir(path)? {
         let entry_path = if entry.is_ok() {
             entry?.path()
         } else {
@@ -23,7 +23,7 @@ pub fn traverse_dir(
         };
 
         if entry_path.is_dir() {
-            if let Ok(path_result) = traverse_dir(entry_path, delete_files, custom_bad_files) {
+            if let Ok(path_result) = traverse_dir(&entry_path, delete_files, custom_bad_files) {
                 result.file_count += path_result.file_count;
                 result.bytes += path_result.bytes;
             }
@@ -35,7 +35,7 @@ pub fn traverse_dir(
             result.file_count += 1;
 
             if let Ok(metadata) = entry_path.metadata() {
-                result.bytes += metadata.len()
+                result.bytes += metadata.len();
             }
 
             if delete_files {

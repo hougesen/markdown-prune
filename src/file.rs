@@ -51,7 +51,7 @@ mod test_file {
         fn true_if_in_bad_extensions() {
             BAD_EXTENSIONS
                 .iter()
-                .for_each(|ext| assert!(check_if_bad_file_ext(Some(std::ffi::OsStr::new(ext)))))
+                .for_each(|ext| assert!(check_if_bad_file_ext(Some(std::ffi::OsStr::new(ext)))));
         }
 
         #[test]
